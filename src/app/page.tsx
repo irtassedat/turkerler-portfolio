@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import About from "@/components/About";
 import TurkerlerVision from "@/components/TurkerlerVision";
+import MarketAnalysis from "@/components/MarketAnalysis";
 import EnergyArchitecture from "@/components/EnergyArchitecture";
 import GitHubProjects from "@/components/GitHubProjects";
 import LiveDemo from "@/components/LiveDemo";
@@ -42,6 +43,7 @@ export default async function Home() {
       <Hero />
       <About />
       <TurkerlerVision />
+      <MarketAnalysis />
       <EnergyArchitecture />
       <LiveDemo />
       <GitHubProjects repos={repos} profile={profile} />

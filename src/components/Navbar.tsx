@@ -7,6 +7,7 @@ const navLinks = [
   { href: "#hero", label: "Ana Sayfa" },
   { href: "#about", label: "Hakkimda" },
   { href: "#turkerler", label: "Vizyon" },
+  { href: "#market", label: "Analiz" },
   { href: "#architecture", label: "Mimari" },
   { href: "#demo", label: "Demo" },
   { href: "#projects", label: "Projeler" },

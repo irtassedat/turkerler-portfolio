@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
 
-function EnergyGrid() {
+function GridBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -15,93 +15,49 @@ function EnergyGrid() {
     let w = (canvas.width = window.innerWidth);
     let h = (canvas.height = window.innerHeight);
 
-    const nodes: {
-      x: number;
-      y: number;
-      vx: number;
-      vy: number;
-      radius: number;
-      color: string;
-      pulse: number;
-    }[] = [];
+    const nodes: { x: number; y: number; vx: number; vy: number; r: number; c: string; p: number }[] = [];
+    const colors = ["#10b981", "#06b6d4", "#3b82f6"];
 
-    const colors = ["#10b981", "#06b6d4", "#3b82f6", "#8b5cf6"];
-
-    for (let i = 0; i < 60; i++) {
+    for (let i = 0; i < 45; i++) {
       nodes.push({
-        x: Math.random() * w,
-        y: Math.random() * h,
-        vx: (Math.random() - 0.5) * 0.3,
-        vy: (Math.random() - 0.5) * 0.3,
-        radius: Math.random() * 2 + 1,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        pulse: Math.random() * Math.PI * 2,
+        x: Math.random() * w, y: Math.random() * h,
+        vx: (Math.random() - 0.5) * 0.25, vy: (Math.random() - 0.5) * 0.25,
+        r: Math.random() * 1.5 + 0.5, c: colors[Math.floor(Math.random() * colors.length)],
+        p: Math.random() * Math.PI * 2,
       });
     }
 
     let frame: number;
-    let time = 0;
-
+    let t = 0;
     function draw() {
       if (!ctx || !canvas) return;
       ctx.clearRect(0, 0, w, h);
-      time += 0.01;
-
+      t += 0.008;
       nodes.forEach((n, i) => {
-        n.x += n.vx;
-        n.y += n.vy;
+        n.x += n.vx; n.y += n.vy;
         if (n.x < 0 || n.x > w) n.vx *= -1;
         if (n.y < 0 || n.y > h) n.vy *= -1;
-
-        const alpha = 0.3 + Math.sin(time + n.pulse) * 0.2;
-
-        // Node glow
-        const grad = ctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, n.radius * 4);
-        grad.addColorStop(0, n.color + "60");
-        grad.addColorStop(1, n.color + "00");
         ctx.beginPath();
-        ctx.arc(n.x, n.y, n.radius * 4, 0, Math.PI * 2);
-        ctx.fillStyle = grad;
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = n.c;
+        ctx.globalAlpha = 0.25 + Math.sin(t + n.p) * 0.15;
         ctx.fill();
-
-        // Node core
-        ctx.beginPath();
-        ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
-        ctx.fillStyle = n.color;
-        ctx.globalAlpha = alpha;
-        ctx.fill();
-
-        // Lines
         nodes.slice(i + 1).forEach((n2) => {
-          const dx = n.x - n2.x;
-          const dy = n.y - n2.y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 180) {
-            ctx.beginPath();
-            ctx.moveTo(n.x, n.y);
-            ctx.lineTo(n2.x, n2.y);
-            ctx.strokeStyle = n.color;
-            ctx.globalAlpha = (1 - dist / 180) * 0.08;
-            ctx.lineWidth = 0.5;
-            ctx.stroke();
+          const d = Math.hypot(n.x - n2.x, n.y - n2.y);
+          if (d < 160) {
+            ctx.beginPath(); ctx.moveTo(n.x, n.y); ctx.lineTo(n2.x, n2.y);
+            ctx.strokeStyle = n.c; ctx.globalAlpha = (1 - d / 160) * 0.06;
+            ctx.lineWidth = 0.5; ctx.stroke();
           }
         });
       });
-
       ctx.globalAlpha = 1;
       frame = requestAnimationFrame(draw);
     }
-
     draw();
-    const resize = () => {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-    };
+    const resize = () => { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; };
     window.addEventListener("resize", resize);
-    return () => {
-      cancelAnimationFrame(frame);
-      window.removeEventListener("resize", resize);
-    };
+    return () => { cancelAnimationFrame(frame); window.removeEventListener("resize", resize); };
   }, []);
 
   return <canvas ref={canvasRef} className="particle-canvas" />;
@@ -109,123 +65,124 @@ function EnergyGrid() {
 
 export default function Hero() {
   return (
-    <section
-      id="hero"
-      className="relative min-h-screen flex items-center justify-center overflow-hidden"
-    >
-      <EnergyGrid />
+    <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <GridBackground />
+      <div className="absolute top-20 left-10 w-[400px] h-[400px] bg-primary/4 rounded-full blur-[150px]" />
+      <div className="absolute bottom-20 right-10 w-[350px] h-[350px] bg-accent/4 rounded-full blur-[150px]" />
 
-      {/* Ambient orbs */}
-      <div className="absolute top-20 left-10 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[150px]" />
-      <div className="absolute bottom-20 right-10 w-[400px] h-[400px] bg-accent/5 rounded-full blur-[150px]" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-secondary/3 rounded-full blur-[200px]" />
-
-      <div className="relative z-10 text-center px-4 max-w-6xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-primary/20 bg-primary/5 backdrop-blur-sm mb-8"
-        >
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-primary" />
-          </span>
-          <span className="text-sm text-primary font-medium tracking-wide">
-            Turkerler Holding &mdash; Dijital Donusum Teklifi
-          </span>
-        </motion.div>
-
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] mb-6 tracking-tight"
-        >
-          <span className="text-foreground">526 MW Portfoyden</span>
-          <br />
-          <span className="text-gradient">3,953 MW&apos;a</span>
-          <br />
-          <span className="text-foreground/80 text-3xl sm:text-5xl lg:text-6xl">
-            AI ile Yonetilen Enerji
-          </span>
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-base sm:text-lg text-foreground/50 max-w-3xl mx-auto mb-10 leading-relaxed"
-        >
-          Jeotermal, ruzgar, hidroelektrik ve offshore santrallerden gelen uretim
-          verilerini otonom AI ajanlarla analiz eden, makine duruslarini tahmin
-          eden, VEDAS dagitim kayiplarini azaltan ve halka arz surecine veri
-          destegi saglayan entegre platform.
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.45 }}
-          className="flex flex-col sm:flex-row gap-3 justify-center"
-        >
-          <a
-            href="#turkerler"
-            className="group px-8 py-4 bg-gradient-to-r from-primary to-accent text-white font-semibold rounded-xl transition-all hover:shadow-[0_0_30px_rgba(16,185,129,0.3)] hover:scale-[1.02]"
-          >
-            <span className="flex items-center justify-center gap-2">
-              Vizyonu Incele
-              <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
-            </span>
-          </a>
-          <a
-            href="#demo"
-            className="px-8 py-4 border border-border/50 bg-surface/30 backdrop-blur-sm text-foreground font-semibold rounded-xl hover:border-primary/30 transition-all hover:bg-surface/50"
-          >
-            Canli Demo
-          </a>
-          <a
-            href="#projects"
-            className="px-8 py-4 border border-border/50 bg-surface/30 backdrop-blur-sm text-foreground font-semibold rounded-xl hover:border-accent/30 transition-all hover:bg-surface/50"
-          >
-            Projelerim
-          </a>
-        </motion.div>
-
-        {/* Key Metrics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.6 }}
-          className="mt-20 grid grid-cols-2 lg:grid-cols-5 gap-4 max-w-4xl mx-auto"
-        >
-          {[
-            { value: "526", unit: "MW", label: "Mevcut Kapasite" },
-            { value: "3,953", unit: "MW", label: "Hedef Kapasite" },
-            { value: "1,500", unit: "MW", label: "Offshore Ruzgar" },
-            { value: "133", unit: "+", label: "Sirket Entegrasyonu" },
-            { value: "24K", unit: "", label: "Calisan" },
-          ].map((s, i) => (
+      <div className="relative z-10 px-4 max-w-6xl mx-auto">
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Left: Text */}
+          <div>
             <motion.div
-              key={s.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.4, delay: 0.7 + i * 0.08 }}
-              className="p-4 rounded-xl bg-surface/40 backdrop-blur-sm border border-border/30 text-center"
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/15 bg-primary/5 mb-6"
             >
-              <div className="text-xl sm:text-2xl font-bold text-gradient">
-                {s.value}
-                <span className="text-sm text-foreground/40">{s.unit}</span>
-              </div>
-              <div className="text-[11px] text-foreground/40 mt-1 tracking-wide uppercase">
-                {s.label}
-              </div>
+              <span className="relative flex h-1.5 w-1.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
+              </span>
+              <span className="text-xs text-primary/80">Turkerler Holding icin hazirlanmistir</span>
             </motion.div>
-          ))}
-        </motion.div>
+
+            <motion.h1
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight mb-5"
+            >
+              <span className="text-foreground/90">Enerji Portfoyunuz Icin</span>
+              <br />
+              <span className="text-gradient">Veri Odakli IT Vizyonu</span>
+            </motion.h1>
+
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-sm text-foreground/45 leading-relaxed mb-8 max-w-lg"
+            >
+              15 aktif santral, 4 ilde dagitim agi, 3 sehir hastanesi ve 6 mega
+              projeyi tek tek inceledim. Her birim icin ozel AI cozum modulleri
+              tasarladim. Bu portfolyo, Turkerler&apos;in gercek operasyonel
+              verileri uzerinden hazirlanmistir.
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-wrap gap-3"
+            >
+              <a href="#turkerler" className="group px-6 py-3 bg-gradient-to-r from-primary to-accent text-white text-sm font-medium rounded-lg transition-all hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]">
+                <span className="flex items-center gap-2">
+                  Analiz Raporunu Incele
+                  <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+                </span>
+              </a>
+              <a href="#demo" className="px-6 py-3 border border-border/40 bg-surface/20 backdrop-blur-sm text-sm font-medium rounded-lg hover:border-primary/20 transition-colors">
+                Dashboard Prototipi
+              </a>
+            </motion.div>
+          </div>
+
+          {/* Right: Key Data */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            <div className="p-5 rounded-xl bg-surface/40 backdrop-blur-sm border border-border/30">
+              <div className="text-[10px] font-mono text-foreground/25 mb-4 tracking-wider">
+                TURKERLER HOLDING — TEMEL VERILER
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 mb-4">
+                {[
+                  { label: "2024 Hasılat", value: "4.2 milyar TL", sub: "+75% YoY buyume", color: "#10b981" },
+                  { label: "Brut Kar Marji", value: "%47.6", sub: "2024 — 2.0 milyar TL", color: "#06b6d4" },
+                  { label: "Kurulu Guc", value: "527 MW", sub: "15 santral aktif", color: "#3b82f6" },
+                  { label: "Hedef Kapasite", value: "3,953 MW", sub: "7.5x buyume plani", color: "#8b5cf6" },
+                ].map((m) => (
+                  <div key={m.label} className="p-3 rounded-lg bg-background/40 border border-border/20">
+                    <div className="text-[9px] text-foreground/20 uppercase tracking-wider">{m.label}</div>
+                    <div className="text-lg font-bold mt-0.5" style={{ color: m.color }}>{m.value}</div>
+                    <div className="text-[9px] text-foreground/15 mt-0.5">{m.sub}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid grid-cols-3 gap-2 mb-4">
+                {[
+                  { label: "Toplam Yatirim", value: "$1.04B" },
+                  { label: "VEDAS 2025", value: "5 milyar TL" },
+                  { label: "Calisan", value: "24,000" },
+                ].map((m) => (
+                  <div key={m.label} className="p-2 rounded-lg bg-background/30 border border-border/15 text-center">
+                    <div className="text-[8px] text-foreground/15 uppercase">{m.label}</div>
+                    <div className="text-xs font-bold text-foreground/60 mt-0.5">{m.value}</div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
+                <div className="text-[9px] text-primary/50 uppercase tracking-wider mb-1">HALKA ARZ SURECI</div>
+                <div className="text-xs text-foreground/50">
+                  SPK basvurusu yapildi (13 Subat 2026). 250M adet pay,
+                  Yildiz Pazar, %20.57 halka acilik. Gelirin %85&apos;i yeni projelere.
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-3 flex items-center justify-end gap-2 text-[9px] text-foreground/15">
+              <span>Kaynak: KAP, EPDK, VEDAS, Turkerler.com</span>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
-      {/* Scroll */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -233,11 +190,11 @@ export default function Hero() {
         className="absolute bottom-6 left-1/2 -translate-x-1/2"
       >
         <motion.div
-          animate={{ y: [0, 8, 0] }}
+          animate={{ y: [0, 6, 0] }}
           transition={{ duration: 2, repeat: Infinity }}
-          className="w-5 h-8 rounded-full border border-foreground/15 flex justify-center pt-1.5"
+          className="w-5 h-7 rounded-full border border-foreground/10 flex justify-center pt-1.5"
         >
-          <div className="w-0.5 h-1.5 bg-primary/60 rounded-full" />
+          <div className="w-0.5 h-1.5 bg-primary/40 rounded-full" />
         </motion.div>
       </motion.div>
     </section>
