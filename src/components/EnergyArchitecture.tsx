@@ -1,53 +1,20 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useLang } from "@/lib/i18n";
 
-const layers = [
-  {
-    title: "Veri Kaynaklari",
-    color: "#f59e0b",
-    items: [
-      { name: "VEDAS", desc: "650K abone, dagitim verileri" },
-      { name: "JES 1-3", desc: "168 MW jeotermal uretim" },
-      { name: "RES", desc: "1,092 MW ruzgar santralleri" },
-      { name: "HES", desc: "124 MW hidroelektrik" },
-      { name: "Angoragaz", desc: "Dogalgaz dagitim & ticaret" },
-    ],
-  },
-  {
-    title: "Veri Pipeline",
-    color: "#3b82f6",
-    items: [
-      { name: "Apache Kafka", desc: "Gercek zamanli veri akisi" },
-      { name: "TimescaleDB", desc: "Zaman serisi veriler" },
-      { name: "Data Lake", desc: "137 sirket birlesik veri" },
-      { name: "SCADA Bridge", desc: "IoT sensor entegrasyonu" },
-    ],
-  },
-  {
-    title: "AI Ajan Katmani",
-    color: "#10b981",
-    items: [
-      { name: "Uretim Analiz Ajani", desc: "Gercek zamanli performans izleme" },
-      { name: "Maliyet Optimizasyon Ajani", desc: "Enerji alim-satim stratejisi" },
-      { name: "Bakim Tahmin Ajani", desc: "Prediktif bakim zamanlama" },
-      { name: "Regulasyon Uyum Ajani", desc: "EPDK uyumluluk takibi" },
-      { name: "Portfoy Yonetim Ajani", desc: "Proje dagılım & kaynak optimizasyonu" },
-    ],
-  },
-  {
-    title: "Cikti Katmani",
-    color: "#8b5cf6",
-    items: [
-      { name: "Executive Dashboard", desc: "Ust yonetim icin ozet goruntu" },
-      { name: "Alarm Sistemi", desc: "Anlık bildirim & eskalasyon" },
-      { name: "Dogal Dil Arayuzu", desc: "Turkce soru-cevap sistemi" },
-      { name: "Raporlama", desc: "Otomatik haftalık/aylik raporlar" },
-    ],
-  },
-];
+const layerColors = ["#f59e0b", "#3b82f6", "#10b981", "#8b5cf6"];
 
 export default function EnergyArchitecture() {
+  const { t } = useLang();
+
+  const layers = t.architecture.layers.map(
+    (layer: { title: string; items: { name: string; desc: string }[] }, i: number) => ({
+      ...layer,
+      color: layerColors[i] || layerColors[0],
+    })
+  );
+
   return (
     <section id="architecture" className="py-24 px-4 relative">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
@@ -60,21 +27,20 @@ export default function EnergyArchitecture() {
           className="text-center mb-16"
         >
           <span className="text-sm font-mono text-accent">
-            // SISTEM MIMARISI
+            {t.architecture.section}
           </span>
           <h2 className="text-4xl sm:text-5xl font-bold mt-3">
-            Turkerler{" "}
-            <span className="text-gradient">AI Hub Mimarisi</span>
+            {t.architecture.titleA}
+            <span className="text-gradient">{t.architecture.titleB}</span>
           </h2>
           <p className="text-foreground/60 mt-4 max-w-2xl mx-auto">
-            Tum enerji varliklarini tek bir AI platformunda birlestiren
-            katmanli mimari.
+            {t.architecture.subtitle}
           </p>
         </motion.div>
 
         {/* Architecture Layers */}
         <div className="space-y-6">
-          {layers.map((layer, layerIndex) => (
+          {layers.map((layer: { title: string; color: string; items: { name: string; desc: string }[] }, layerIndex: number) => (
             <motion.div
               key={layer.title}
               initial={{ opacity: 0, x: layerIndex % 2 === 0 ? -30 : 30 }}
@@ -101,7 +67,7 @@ export default function EnergyArchitecture() {
 
               {/* Layer Items */}
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 ml-6">
-                {layer.items.map((item, i) => (
+                {layer.items.map((item: { name: string; desc: string }, i: number) => (
                   <motion.div
                     key={item.name}
                     initial={{ opacity: 0, y: 10 }}
@@ -155,7 +121,7 @@ export default function EnergyArchitecture() {
           className="mt-16 p-6 rounded-xl bg-surface border border-border"
         >
           <h4 className="font-bold text-center mb-4">
-            Kullanilacak Teknolojiler
+            {t.architecture.techTitle}
           </h4>
           <div className="flex flex-wrap justify-center gap-2">
             {[

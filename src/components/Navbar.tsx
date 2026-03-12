@@ -2,22 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLang, Lang } from "@/lib/i18n";
 
-const navLinks = [
-  { href: "#hero", label: "Ana Sayfa" },
-  { href: "#about", label: "Hakkimda" },
-  { href: "#turkerler", label: "Vizyon" },
-  { href: "#market", label: "Analiz" },
-  { href: "#architecture", label: "Mimari" },
-  { href: "#demo", label: "Demo" },
-  { href: "#projects", label: "Projeler" },
-  { href: "#tech", label: "Teknolojiler" },
-  { href: "#contact", label: "Iletisim" },
+const langs: { key: Lang; label: string }[] = [
+  { key: "tr", label: "TR" },
+  { key: "en", label: "EN" },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { lang, setLang, t } = useLang();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
@@ -40,16 +35,16 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <a href="#hero" className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <span className="text-white font-bold text-sm">SI</span>
+              <span className="text-white font-bold text-sm">Sİ</span>
             </div>
             <span className="font-bold text-lg text-foreground hidden sm:block">
-              Sedat Irtas
+              {t.footer.name}
             </span>
           </a>
 
           {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((link) => (
+            {t.nav.map((link) => (
               <a
                 key={link.href}
                 href={link.href}
@@ -58,25 +53,50 @@ export default function Navbar() {
                 {link.label}
               </a>
             ))}
+            <div className="w-px h-5 bg-border mx-2" />
+            <div className="flex items-center rounded-lg overflow-hidden border border-border/50">
+              {langs.map((l) => (
+                <button
+                  key={l.key}
+                  onClick={() => setLang(l.key)}
+                  className={`px-2.5 py-1.5 text-[10px] font-mono transition-all ${
+                    lang === l.key
+                      ? "bg-primary text-white"
+                      : "text-foreground/40 hover:text-foreground hover:bg-surface-light"
+                  }`}
+                >
+                  {l.label}
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* Mobile toggle */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 rounded-lg hover:bg-surface-light transition-colors"
-          >
-            <div className="w-5 h-5 flex flex-col justify-center gap-1">
-              <span
-                className={`block h-0.5 w-5 bg-foreground transition-transform ${mobileOpen ? "rotate-45 translate-y-1.5" : ""}`}
-              />
-              <span
-                className={`block h-0.5 w-5 bg-foreground transition-opacity ${mobileOpen ? "opacity-0" : ""}`}
-              />
-              <span
-                className={`block h-0.5 w-5 bg-foreground transition-transform ${mobileOpen ? "-rotate-45 -translate-y-1.5" : ""}`}
-              />
+          {/* Mobile: lang + hamburger */}
+          <div className="md:hidden flex items-center gap-2">
+            <div className="flex items-center rounded-lg overflow-hidden border border-border/50">
+              {langs.map((l) => (
+                <button
+                  key={l.key}
+                  onClick={() => setLang(l.key)}
+                  className={`px-1.5 py-1 text-[9px] font-mono transition-all ${
+                    lang === l.key ? "bg-primary text-white" : "text-foreground/40"
+                  }`}
+                >
+                  {l.label}
+                </button>
+              ))}
             </div>
-          </button>
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="p-2 rounded-lg hover:bg-surface-light transition-colors"
+            >
+              <div className="w-5 h-5 flex flex-col justify-center gap-1">
+                <span className={`block h-0.5 w-5 bg-foreground transition-transform ${mobileOpen ? "rotate-45 translate-y-1.5" : ""}`} />
+                <span className={`block h-0.5 w-5 bg-foreground transition-opacity ${mobileOpen ? "opacity-0" : ""}`} />
+                <span className={`block h-0.5 w-5 bg-foreground transition-transform ${mobileOpen ? "-rotate-45 -translate-y-1.5" : ""}`} />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -90,7 +110,7 @@ export default function Navbar() {
             className="md:hidden bg-surface/95 backdrop-blur-xl border-b border-border"
           >
             <div className="px-4 py-3 space-y-1">
-              {navLinks.map((link) => (
+              {t.nav.map((link) => (
                 <a
                   key={link.href}
                   href={link.href}

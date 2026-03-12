@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ClientProviders } from "@/components/ClientProviders";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Sedat Irtas | AI-Powered Energy Solutions",
+  title: "Sedat İrtaş | AI-Powered Energy Solutions",
   description:
     "Full-Stack Developer specializing in AI autonomous agents for renewable energy infrastructure. Türkerler Holding digital transformation proposal.",
   keywords: [
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     "energy optimization",
   ],
   openGraph: {
-    title: "Sedat Irtas | AI-Powered Energy Solutions",
+    title: "Sedat İrtaş | AI-Powered Energy Solutions",
     description:
       "Transforming renewable energy operations with autonomous AI agents",
     type: "website",
@@ -40,11 +41,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr" className="dark">
+    <html lang="tr" className="dark" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-background text-foreground`}
       >
-        {children}
+        <ClientProviders>{children}</ClientProviders>
       </body>
     </html>
   );

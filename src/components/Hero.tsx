@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { useEffect, useRef } from "react";
+import { useLang } from "@/lib/i18n";
 
 function GridBackground() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -63,7 +64,11 @@ function GridBackground() {
   return <canvas ref={canvasRef} className="particle-canvas" />;
 }
 
+const metricColors = ["#10b981", "#06b6d4", "#3b82f6", "#8b5cf6"];
+
 export default function Hero() {
+  const { t } = useLang();
+
   return (
     <section id="hero" className="relative min-h-screen flex items-center justify-center overflow-hidden">
       <GridBackground />
@@ -84,7 +89,7 @@ export default function Hero() {
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
                 <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-primary" />
               </span>
-              <span className="text-xs text-primary/80">Turkerler Holding icin hazirlanmistir</span>
+              <span className="text-xs text-primary/80">{t.hero.badge}</span>
             </motion.div>
 
             <motion.h1
@@ -93,9 +98,9 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.15] tracking-tight mb-5"
             >
-              <span className="text-foreground/90">Enerji Portfoyunuz Icin</span>
+              <span className="text-foreground/90">{t.hero.titleA}</span>
               <br />
-              <span className="text-gradient">Veri Odakli IT Vizyonu</span>
+              <span className="text-gradient">{t.hero.titleB}</span>
             </motion.h1>
 
             <motion.p
@@ -104,10 +109,7 @@ export default function Hero() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-sm text-foreground/45 leading-relaxed mb-8 max-w-lg"
             >
-              15 aktif santral, 4 ilde dagitim agi, 3 sehir hastanesi ve 6 mega
-              projeyi tek tek inceledim. Her birim icin ozel AI cozum modulleri
-              tasarladim. Bu portfolyo, Turkerler&apos;in gercek operasyonel
-              verileri uzerinden hazirlanmistir.
+              {t.hero.desc}
             </motion.p>
 
             <motion.div
@@ -118,12 +120,12 @@ export default function Hero() {
             >
               <a href="#turkerler" className="group px-6 py-3 bg-gradient-to-r from-primary to-accent text-white text-sm font-medium rounded-lg transition-all hover:shadow-[0_0_20px_rgba(16,185,129,0.2)]">
                 <span className="flex items-center gap-2">
-                  Analiz Raporunu Incele
+                  {t.hero.cta1}
                   <svg className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
                 </span>
               </a>
               <a href="#demo" className="px-6 py-3 border border-border/40 bg-surface/20 backdrop-blur-sm text-sm font-medium rounded-lg hover:border-primary/20 transition-colors">
-                Dashboard Prototipi
+                {t.hero.cta2}
               </a>
             </motion.div>
           </div>
@@ -136,30 +138,21 @@ export default function Hero() {
           >
             <div className="p-5 rounded-xl bg-surface/40 backdrop-blur-sm border border-border/30">
               <div className="text-[10px] font-mono text-foreground/25 mb-4 tracking-wider">
-                TURKERLER HOLDING — TEMEL VERILER
+                {t.hero.data.header}
               </div>
 
               <div className="grid grid-cols-2 gap-3 mb-4">
-                {[
-                  { label: "2024 Hasılat", value: "4.2 milyar TL", sub: "+75% YoY buyume", color: "#10b981" },
-                  { label: "Brut Kar Marji", value: "%47.6", sub: "2024 — 2.0 milyar TL", color: "#06b6d4" },
-                  { label: "Kurulu Guc", value: "527 MW", sub: "15 santral aktif", color: "#3b82f6" },
-                  { label: "Hedef Kapasite", value: "3,953 MW", sub: "7.5x buyume plani", color: "#8b5cf6" },
-                ].map((m) => (
+                {t.hero.data.metrics.map((m, i) => (
                   <div key={m.label} className="p-3 rounded-lg bg-background/40 border border-border/20">
                     <div className="text-[9px] text-foreground/20 uppercase tracking-wider">{m.label}</div>
-                    <div className="text-lg font-bold mt-0.5" style={{ color: m.color }}>{m.value}</div>
+                    <div className="text-lg font-bold mt-0.5" style={{ color: metricColors[i] }}>{m.value}</div>
                     <div className="text-[9px] text-foreground/15 mt-0.5">{m.sub}</div>
                   </div>
                 ))}
               </div>
 
               <div className="grid grid-cols-3 gap-2 mb-4">
-                {[
-                  { label: "Toplam Yatirim", value: "$1.04B" },
-                  { label: "VEDAS 2025", value: "5 milyar TL" },
-                  { label: "Calisan", value: "24,000" },
-                ].map((m) => (
+                {t.hero.data.sub.map((m) => (
                   <div key={m.label} className="p-2 rounded-lg bg-background/30 border border-border/15 text-center">
                     <div className="text-[8px] text-foreground/15 uppercase">{m.label}</div>
                     <div className="text-xs font-bold text-foreground/60 mt-0.5">{m.value}</div>
@@ -168,16 +161,15 @@ export default function Hero() {
               </div>
 
               <div className="p-3 rounded-lg bg-primary/5 border border-primary/10">
-                <div className="text-[9px] text-primary/50 uppercase tracking-wider mb-1">HALKA ARZ SURECI</div>
+                <div className="text-[9px] text-primary/50 uppercase tracking-wider mb-1">{t.hero.data.ipo.title}</div>
                 <div className="text-xs text-foreground/50">
-                  SPK basvurusu yapildi (13 Subat 2026). 250M adet pay,
-                  Yildiz Pazar, %20.57 halka acilik. Gelirin %85&apos;i yeni projelere.
+                  {t.hero.data.ipo.desc}
                 </div>
               </div>
             </div>
 
             <div className="mt-3 flex items-center justify-end gap-2 text-[9px] text-foreground/15">
-              <span>Kaynak: KAP, EPDK, VEDAS, Turkerler.com</span>
+              <span>{t.hero.data.source}</span>
             </div>
           </motion.div>
         </div>

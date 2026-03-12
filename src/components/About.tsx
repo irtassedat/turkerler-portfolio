@@ -1,38 +1,11 @@
 "use client";
 
 import { motion } from "framer-motion";
-
-const highlights = [
-  {
-    icon: "\u26A1",
-    title: "Full-Stack Gelistirici",
-    desc: "React, Next.js, Node.js, Java/Spring Boot, PostgreSQL, MongoDB ile uretim seviyesinde uygulama gelistirme deneyimi.",
-  },
-  {
-    icon: "\uD83E\uDD16",
-    title: "AI & Otonom Sistemler",
-    desc: "Claude API, otonom ajan mimarileri, MCP Server entegrasyonu, gercek zamanli veri isleyen akilli sistemler.",
-  },
-  {
-    icon: "\uD83D\uDCCA",
-    title: "Veri Analiz & Pattern Recognition",
-    desc: "Cok kaynakli veri toplama, anomali tespiti, risk skorlama ve otomatik raporlama sistemleri.",
-  },
-  {
-    icon: "\uD83D\uDE80",
-    title: "Otomasyon & Bot Sistemleri",
-    desc: "Telegram bot altyapilari, otomatik izleme/alarm sistemleri, workflow otomasyon ve DevOps.",
-  },
-];
-
-const timeline = [
-  { year: "2024", title: "Workintech Full-Stack Bootcamp", desc: "React, Java/Spring Boot, veritabani yonetimi" },
-  { year: "2024-25", title: "QR Menu Platform", desc: "End-to-end restoran yonetim sistemi" },
-  { year: "2025", title: "E-Commerce Platform", desc: "React + Spring Boot full-stack proje" },
-  { year: "2025-26", title: "AI Ajan & Otomasyon Sistemleri", desc: "Claude AI entegrasyonlari, Telegram botlari, veri isleme platformlari" },
-];
+import { useLang } from "@/lib/i18n";
 
 export default function About() {
+  const { t } = useLang();
+
   return (
     <section id="about" className="py-24 px-4 relative">
       <div className="max-w-6xl mx-auto">
@@ -43,11 +16,11 @@ export default function About() {
           className="text-center mb-16"
         >
           <span className="text-sm font-mono text-primary tracking-wider">
-            HAKKIMDA
+            {t.about.section}
           </span>
           <h2 className="text-3xl sm:text-5xl font-bold mt-3 tracking-tight">
-            Teknolojiyi{" "}
-            <span className="text-gradient">Enerjiye Donusturuyorum</span>
+            {t.about.titleA}
+            <span className="text-gradient">{t.about.titleB}</span>
           </h2>
         </motion.div>
 
@@ -60,21 +33,14 @@ export default function About() {
             className="lg:col-span-3 space-y-5"
           >
             <p className="text-foreground/60 text-lg leading-relaxed">
-              Full-stack yazilimci olarak React/Next.js ekosistemi, Java/Spring Boot
-              backend ve modern AI teknolojileri konusunda uretim seviyesinde deneyime
-              sahibim. Ozellikle{" "}
-              <strong className="text-primary">gercek zamanli veri isleme</strong>,{" "}
-              <strong className="text-accent">anomali tespit sistemleri</strong> ve{" "}
-              <strong className="text-secondary">otonom ajan mimarileri</strong> alaninda
-              cozumler gelistiriyorum.
+              {t.about.bio1}
+              <strong className="text-primary">{t.about.bio1_s1}</strong>,{" "}
+              <strong className="text-accent">{t.about.bio1_s2}</strong> ve{" "}
+              <strong className="text-secondary">{t.about.bio1_s3}</strong>
+              {t.about.bio1_end}
             </p>
             <p className="text-foreground/60 text-lg leading-relaxed">
-              Cok kaynakli veri toplama, pattern recognition ve otomatik risk skorlama
-              konularinda gelistirdigim sistemler, buyuk olcekli operasyonlarda
-              karar destek mekanizmasi olarak kullanilmaktadir. Bu deneyimi
-              Turkerler Holding&apos;in enerji portfoyune uyarlayarak, 133 sirketten
-              gelen verileri birlestiren ve operasyonel verimliligi artiran bir
-              AI platformu oneriyorum.
+              {t.about.bio2}
             </p>
 
             {/* Social Links */}
@@ -114,20 +80,20 @@ export default function About() {
             className="lg:col-span-2"
           >
             <div className="p-5 rounded-xl bg-surface border border-border">
-              <h3 className="text-sm font-mono text-foreground/40 mb-4 tracking-wider">YOLCULUK</h3>
+              <h3 className="text-sm font-mono text-foreground/40 mb-4 tracking-wider">{t.about.journey}</h3>
               <div className="space-y-4">
-                {timeline.map((t, i) => (
-                  <div key={t.year} className="flex gap-3">
+                {t.about.timeline.map((item, i) => (
+                  <div key={item.year} className="flex gap-3">
                     <div className="flex flex-col items-center">
                       <div className="w-2 h-2 rounded-full bg-primary mt-2" />
-                      {i < timeline.length - 1 && (
+                      {i < t.about.timeline.length - 1 && (
                         <div className="w-px flex-1 bg-border mt-1" />
                       )}
                     </div>
                     <div className="pb-4">
-                      <div className="text-xs text-primary font-mono">{t.year}</div>
-                      <div className="font-medium text-sm mt-0.5">{t.title}</div>
-                      <div className="text-xs text-foreground/40 mt-0.5">{t.desc}</div>
+                      <div className="text-xs text-primary font-mono">{item.year}</div>
+                      <div className="font-medium text-sm mt-0.5">{item.title}</div>
+                      <div className="text-xs text-foreground/40 mt-0.5">{item.desc}</div>
                     </div>
                   </div>
                 ))}
@@ -138,7 +104,7 @@ export default function About() {
 
         {/* Skill Cards */}
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {highlights.map((item, i) => (
+          {t.about.highlights.map((item, i) => (
             <motion.div
               key={item.title}
               initial={{ opacity: 0, y: 15 }}
